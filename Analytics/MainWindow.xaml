@@ -1,0 +1,111 @@
+﻿<Window    
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Analytics"      
+    xmlns:chartPrimitive="clr-namespace:System.Windows.Controls.DataVisualization.Charting.Primitives;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+xmlns:visualizationToolkit="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+      xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="Analytics.MainWindow"      
+    
+      Icon="Icon1.ico"
+         mc:Ignorable="d"       
+        Title="Оптимальный режим СКЗ" Height="447" Width="874">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition x:Name="chartColumn" Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="filePathTB" MaxLines="1" TextWrapping="NoWrap" HorizontalAlignment="Left" Margin="10,22,0,0" Width="325" TextChanged="textBox_TextChanged" Grid.Row="1" Height="23" VerticalAlignment="Top"/>
+        <Button x:Name="filePathBtn" Content="Выбрать" HorizontalAlignment="Left" Height="23" Margin="335,22,0,0" VerticalAlignment="Top" Width="55" Click="openFile_Click" Grid.Row="1"/>
+        <ScrollViewer Margin="10,70,0,0" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <TextBlock x:Name="textBlock"  TextWrapping="Wrap"/>
+        </ScrollViewer>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Width="auto" Height="auto" Grid.Column="1" Grid.Row="1">
+            <chartingToolkit:Chart  x:Name="chart" Margin="0" Padding="0" >
+                <chartingToolkit:Chart.Axes>
+                    <chartingToolkit:CategoryAxis Orientation="X" Title="Протяженность газопровода" />
+                    <chartingToolkit:CategoryAxis Orientation="Y" Title="Защитый потенциал, В" />
+                </chartingToolkit:Chart.Axes>
+                <chartingToolkit:Chart.Style>
+                    <Style TargetType="{x:Type chartingToolkit:Chart}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type chartingToolkit:Chart}">
+                                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="0">
+                                        <Grid ClipToBounds="True" >
+                                            <visualizationToolkit:Title Content="{TemplateBinding Title}" Style="{TemplateBinding TitleStyle}"/>
+                                            <Grid Margin="0" Grid.Row="1" ClipToBounds="False">
+                                                <chartPrimitive:EdgePanel x:Name="ChartArea" Style="{TemplateBinding ChartAreaStyle}" Margin="0" Panel.ZIndex="5" >
+                                                    <Grid Style="{TemplateBinding PlotAreaStyle}" Panel.ZIndex="-1"/>
+                                                    <Border BorderBrush="#FF919191" BorderThickness="1" Panel.ZIndex="500"/>
+                                                </chartPrimitive:EdgePanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </chartingToolkit:Chart.Style>
+
+                <chartingToolkit:LineSeries Title="Защитный потенциал"  
+                                    ItemsSource="{Binding [0]}" 
+                                    DependentValueBinding="{Binding Value}" 
+                                    IndependentValueBinding="{Binding Key}"
+                                    IsSelectionEnabled="True"/>
+                <chartingToolkit:LineSeries Title="Макс. значение"  
+                                    ItemsSource="{Binding [1]}" 
+                                    DependentValueBinding="{Binding Value}" 
+                                    IndependentValueBinding="{Binding Key}"
+                                    IsSelectionEnabled="True">
+                    <chartingToolkit:LineSeries.PolylineStyle>
+                        <Style TargetType="{x:Type Polyline}">
+                            <Setter Property="StrokeDashArray" Value="5 5 5" />
+                            <Setter Property="StrokeThickness" Value="2"/>
+                        </Style>
+                    </chartingToolkit:LineSeries.PolylineStyle>
+                    <chartingToolkit:LineSeries.DataPointStyle>
+                        <Style TargetType="{x:Type chartingToolkit:LineDataPoint}">
+                            <Setter Property="Background" Value="Red"/>
+                            <Setter Property="Template" Value="{x:Null}" />
+                        </Style>
+                    </chartingToolkit:LineSeries.DataPointStyle>
+                </chartingToolkit:LineSeries>
+                <chartingToolkit:LineSeries Title="Мин. значение"  
+                                    ItemsSource="{Binding [2]}" 
+                                    DependentValueBinding="{Binding Value}" 
+                                    IndependentValueBinding="{Binding Key}"
+                                    IsSelectionEnabled="True">
+                    <chartingToolkit:LineSeries.PolylineStyle>
+                        <Style TargetType="{x:Type Polyline}">
+                            <Setter Property="StrokeDashArray" Value="5 5 5" />
+                            <Setter Property="StrokeThickness" Value="2"/>
+                        </Style>
+                    </chartingToolkit:LineSeries.PolylineStyle>
+                    <chartingToolkit:LineSeries.DataPointStyle>
+                        <Style TargetType="{x:Type chartingToolkit:LineDataPoint}">
+                            <Setter Property="Background" Value="Green"/>
+                            <Setter Property="Template" Value="{x:Null}" />
+                        </Style>
+                    </chartingToolkit:LineSeries.DataPointStyle>
+                </chartingToolkit:LineSeries>
+            </chartingToolkit:Chart>
+        </ScrollViewer>
+        <Image x:Name="image" Grid.Column="1" Margin="85,16,81,0" Source="Legend.png" Width="300"/>
+        <Label x:Name="label" Content="График защитного потенциала" Grid.Column="1" Grid.Row="0" Margin="135,0,131,20" Width="180" FontWeight="Bold"/>
+        <Label x:Name="label1" Content="Допустимые интервалы защитного потенциала:" HorizontalAlignment="Left" Margin="10,-2,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <TextBox x:Name="minUTB" HorizontalAlignment="Left" Margin="45,22,0,0" TextWrapping="Wrap" Text="0,9" Width="50" IsEnabled="False" PreviewTextInput="float_PreviewTextInput"/>
+        <TextBox x:Name="maxUTB" HorizontalAlignment="Left" Height="23" Margin="129,22,0,0" TextWrapping="Wrap" Text="1,5" VerticalAlignment="Top" Width="66" IsEnabled="False" PreviewTextInput="float_PreviewTextInput"/>
+        <Label x:Name="label2" Content="От" HorizontalAlignment="Left" Margin="14,19,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label2_Copy" Content="до" HorizontalAlignment="Left" Margin="102,19,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label2_Copy1" Content="В" HorizontalAlignment="Left" Margin="194,20,0,0" VerticalAlignment="Top" Grid.RowSpan="2"/>
+        <CheckBox x:Name="GOSTValuesCB" Content="ГОСТ Р 51164-98" HorizontalAlignment="Left" Margin="223,26,0,0" VerticalAlignment="Top" IsChecked="True" Checked="GOSTValuesCB_Checked" Unchecked="GOSTValuesCB_Unchecked"/>
+        <Label x:Name="label1_Copy" Content="Входные данные" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="11,42,0,0" Grid.RowSpan="2" FontWeight="Bold"/>
+        <Label x:Name="label1_Copy1" Content="Отчет" VerticalAlignment="Top" Margin="177,50,178,0" Grid.Row="1" Width="45" FontWeight="Bold"/>
+    </Grid>
+</Window>
